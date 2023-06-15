@@ -7,7 +7,7 @@
   <!-- render img and messages -->
   <div class="wrapAll">
     {#each $messageImage as img, i}
-      {#if $messages[i]}
+      {#if $messages}
         <div class="wrap">
           <div class="wrapItem">
             <div class="wrapImg">
