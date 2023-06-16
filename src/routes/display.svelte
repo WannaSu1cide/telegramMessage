@@ -1,5 +1,7 @@
 <script>
   import { messages, messageImage } from "./store";  
+  const likeIcon =  `<i class="fa-regular fa-thumbs-up likeIcon"></i>`
+
 </script>
 
 
@@ -7,7 +9,7 @@
   <!-- render img and messages -->
   <div class="wrapAll">
     {#each $messageImage as img, i}
-      {#if $messages}
+      {#if $messages[i]}
         <div class="wrap">
           <div class="wrapItem">
             <div class="wrapImg">
