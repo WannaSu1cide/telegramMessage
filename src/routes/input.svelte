@@ -8,7 +8,7 @@
       let data = []
       let ShowEmojiContainer = false;
       let searchEmojiValue = "";
-
+      
       let emojiFilter = [];
       $:console.log(emojiFilter)
       onMount(
@@ -18,7 +18,9 @@
        		}     
       )
         
-      
+      const scrollToBottom = async (node) => {
+        node.scroll({ top: node.scrollHeight, behavior: 'smooth' });
+  }; 
       $: result = chats[takeUserUsing-1];
       function addVtoArray(newMessage){
         if (newMessage != 0){
@@ -49,12 +51,11 @@
   }
   const searchEmoji =  function(){
         return emojiFilter = data.filter(emoji =>{
-             let emojiSubGroup = emoji.subGroup.toLowerCase();
-          return emojiSubGroup.includes(searchEmojiValue.toLowerCase());
+             let emojiGroup = emoji.subGroup.toLowerCase();
+          return emojiGroup.includes(searchEmojiValue.toLowerCase());
         })
     }
     </script>
-
     <main>
       <input
         type="text"
@@ -179,11 +180,16 @@
   }
   ::-webkit-scrollbar {
     width: 5px;
+    height: 80%;
   }
 
   /* Track */
-  ::-webkit-scrollbar-track {
-    background: #888;
+  .emojiContainer ::-webkit-scrollbar-track {
+    background: black;
+    max-height: 90%;
+  }
+  .emojiContainer ::-webkit-scrollbar-track-piece:start{
+
   }
 
   /* Handle */
@@ -191,6 +197,7 @@
     background: #333;
     border-radius: 20px;
     height: 10px;
+
   }
 
   /* Handle on hover */

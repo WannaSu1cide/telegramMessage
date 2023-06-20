@@ -1,11 +1,31 @@
 <script>
   import { messages, messageImage } from "./store";  
-  const likeIcon =  `<i class="fa-regular fa-thumbs-up likeIcon"></i>`
+  import { afterUpdate } from 'svelte';
 
+  const icon = 'i.fa-regular.fa-thumbs-up.likeIcon.s-YG_pBx-H-V29';
+  let element;
+
+  const scrollToBottom = async (node) => {
+    node.scroll({ top: node.scrollHeight, behavior: 'smooth' });
+  };
+
+  $: {
+    if (messages && element) {
+      scrollToBottom(element);
+    }
+  }
+
+  afterUpdate(() => {
+    if (messages) {
+      scrollToBottom(element);
+    }
+  });
 </script>
 
 
-<div class="container">
+
+
+<div class="container"  bind:this={element}>
   <!-- render img and messages -->
   <div class="wrapAll">
     {#each $messageImage as img, i}
@@ -27,8 +47,6 @@
   </div>
 </div>
 
-
-
 <style>
   .container {
     position: fixed;
@@ -36,7 +54,7 @@
     left: 20%;
     height: calc(100vh - 8%);
     width: 80vw;
-    overflow-y: scroll;
+    overflow: auto;
     background-image: url("https://svgur.com/i/jyv.svg");
   }
   .wrapAll {

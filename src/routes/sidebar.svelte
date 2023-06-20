@@ -34,7 +34,6 @@
   <Animation name={chats[selectedChatId - 1].name} />
 {/if}
 <Input chats={chats} takeUserUsing ={selectedChatId} />
-
 <style>
   .sidebar {
     position: relative;
