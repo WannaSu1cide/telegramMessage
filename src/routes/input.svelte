@@ -1,19 +1,23 @@
     <script>
-    import { each } from "svelte/internal";
       import { messages ,messageImage } from "./store";
       import { onMount } from "svelte";
+      import { clickOutside } from "./clickOutside"
       let inputValue = "";
       export  let takeUserUsing ;
       export  let chats = [];    
       let data = []
-      let toggle = false;
+      let ShowEmojiContainer = false;
+      let searchEmojiValue = "";
 
+      let emojiFilter = [];
+      $:console.log(emojiFilter)
       onMount(
         async ()=>{
         const res = await   fetch("https://emoji-api.com/emojis?access_key=ebce92b8e661a6ee7ab038c4253d32c309e83958")
           data = await res.json();
        		}     
       )
+        
       
       $: result = chats[takeUserUsing-1];
       function addVtoArray(newMessage){
@@ -28,13 +32,11 @@
           let dataImg = result.img;
           $messageImage = [...$messageImage,dataImg];
         }
-        console.log($messages)
       }
       function addLikeIcon(event){
         console.log(event.target)
           $messages = [...$messages,event.target];
           $messageImage = [...$messageImage,result.img];
-          console.log($messages)
       }
       const onKeyPress = (e) => {
         if (e.charCode === 13) {
@@ -45,6 +47,12 @@
       function ShowEmoji(event) {
         inputValue += event.target.textContent;
   }
+  const searchEmoji =  function(){
+        return emojiFilter = data.filter(emoji =>{
+             let emojiSubGroup = emoji.subGroup.toLowerCase();
+          return emojiSubGroup.includes(searchEmojiValue.toLowerCase());
+        })
+    }
     </script>
 
     <main>
@@ -53,30 +61,35 @@
         class="input"
         bind:value={inputValue}
         on:keypress={onKeyPress}
-        onblur="this.focus()" autofocus
-        on:keydown={(event) => {
+          autofocus
+          on:keydown={(event) => {
           if (event.key === "Enter") {
             addImageMessage();
           }
         }}
       />
-      {#if toggle}
-      <div class="emojiContainer">
+      {#if ShowEmojiContainer}
+      <div class="emojiContainer" use:clickOutside on:outclick={() => (ShowEmojiContainer = false)}>
         <div class="emojiSearch">
-
-          <input type="text" class="searchEmoji">
+          <input type="text" class="searchEmoji" on:input={searchEmoji} bind:value={searchEmojiValue}> 
         </div>
+        {#if searchEmojiValue !== "" }
+        <ul class="filter">
+        {#each emojiFilter as emoji}
+        <li  on:click={ShowEmoji}>{emoji.character}</li>
+        {/each}
+        </ul>
+          {:else}
         <ul class="emojiWrap">
           {#each data as emoji}
             <li  on:click={ShowEmoji}>{emoji.character}</li>
           {/each}
         </ul>
-
+        {/if}
       </div>
-    {/if}
+      {/if}
    <div class="Icon">
-    <i class="fa-regular fa-face-smile smile" on:click={()=>{toggle =!toggle}} ></i>
-
+    <i class="fa-regular fa-face-smile smile" on:click={()=>{ShowEmojiContainer = !ShowEmojiContainer}} ></i>
     <i class="fa-regular fa-thumbs-up likeIcon" on:click={addLikeIcon} ></i>
    </div>
     
@@ -118,9 +131,10 @@
   ul{
     display: flex;
     flex-wrap: wrap;
-    padding: 0;
-    margin: 0;
     list-style-type: none;
+  }
+  .filter{
+    display: flex;
   }
       .emojiContainer li{
         list-style-type: none;
@@ -141,6 +155,8 @@
       border: none;
       background-color: #333;
       color: white;
+      z-index: 1;
+      position: relative;
   }
   .Icon{
     position: inherit;
@@ -156,6 +172,10 @@
   .likeIcon:hover{
     color:lightblue;
 
+  }
+  .smile:hover{
+    color:lightblue;
+    cursor: pointer;
   }
   ::-webkit-scrollbar {
     width: 5px;
